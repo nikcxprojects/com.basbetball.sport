@@ -10,6 +10,8 @@ public class UIManager : MonoBehaviour
     }
 
     private int score;
+    [SerializeField] Text scoreText;
+
     private GameObject _gameRef;
 
     [Space(10)]
@@ -18,6 +20,19 @@ public class UIManager : MonoBehaviour
     [SerializeField] GameObject top;
     [SerializeField] GameObject game;
     [SerializeField] GameObject pause;
+
+    private void Awake()
+    {
+        Bucket.OnCollisionEnter += () =>
+        {
+            scoreText.text = $"{++score}";
+
+            if(SettingsManager.VibraEnbled)
+            {
+                Handheld.Vibrate();
+            }
+        };
+    }
 
 
     private void Start()
@@ -34,10 +49,14 @@ public class UIManager : MonoBehaviour
 
         Time.timeScale = 1;
 
+        score = 0;
+        scoreText.text = $"{score}";
+
         var _parent = GameObject.Find("Environment").transform;
         var _prefab = Resources.Load<GameObject>("level");
 
         _gameRef = Instantiate(_prefab, _parent);
+        Bucket.UpdatePositiion();
 
         pause.SetActive(false);
         menu.SetActive(false);
